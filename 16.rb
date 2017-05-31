@@ -51,19 +51,17 @@ end
 
 def make_cookie(user_data)
   cookie = PREFIX + clean_data(user_data) + POSTFIX
-  #puts "making cookie: #{cookie.inspect}"
+  puts "making cookie: #{cookie.inspect}"
   encrypted_cookie = encrypt_cbc(cookie)
 end
 
 raise "need padding to align with prefix" if PREFIX.size % 16 != 0
 
 pad = "A" * 15
-candidates = (0..255).map do |byte|
+ct_bytes  = (0..255).lazy.map do |byte|
   # Note: ':' is one less than ';' and '<' is one less than '='
   candidate = make_cookie(pad + byte.chr + ":admin<true").bytes
-end
-
-ct_bytes = candidates.detect do |candidate|
+end.detect do |candidate|
   # We want to find a candidate that has both LSBits cleared so we can increment them
   # and we will get the desired result when they are XOR'd
   candidate[PREFIX.size + 0] & 0x01 == 0 && candidate[PREFIX.size + 6] & 0x01 == 0
