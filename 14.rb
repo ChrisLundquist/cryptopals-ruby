@@ -91,7 +91,7 @@ def detect_pad_bytes
     acc
   end
 
-  pad_bytes = pad_sizes.select { |k,v| v == pad_sizes[0] }. max_by { |k,v| k }[0]
+  pad_bytes = pad_sizes.select { |k,v| v == pad_sizes[0] }.max_by { |k,v| k }[0]
   pad_bytes
 end
 
